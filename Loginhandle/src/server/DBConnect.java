@@ -17,6 +17,8 @@ import java.util.Random;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 public class DBConnect {
 
 	public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1";
@@ -28,13 +30,13 @@ public class DBConnect {
 	private Connection con;
 	private Statement st;
 	private ResultSet rs;
-	
 
 	public DBConnect() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			con = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/new_schema", "root", "");
+					"jdbc:mysql://localhost:3306/login_service", "root",
+					"password");
 			st = con.createStatement();
 			System.out.println("Connected!");
 		} catch (ClassNotFoundException e) {
@@ -44,35 +46,44 @@ public class DBConnect {
 		}
 	}
 
-	public void insert(String username, String userpass) {
-		final String[] hashResponse = getHashedPass(userpass.toCharArray(), null);
+	public boolean insert(String username, String userpass) {
+		final String[] newHashes = getHashedPass(userpass.toCharArray(),
+				null);
 		try {
 			PreparedStatement posted = con
-					.prepareStatement("INSERT INTO loginhandle (username, userpass, usersalt) VALUES ('"+username+"', '"+hashResponse[0]+"', '"+hashResponse[1]+"')");
+					.prepareStatement("INSERT INTO userinfo (username, userpass, usersalt) VALUES ('"
+							+ username
+							+ "', '"
+							+ newHashes[0]
+							+ "', '"
+							+ newHashes[1] + "')");
 			posted.executeUpdate();
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			return false;  // Username already exists;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		System.out.println("Inserted!");
-
+		return true;
+		
 	}
-	
 
 	public void tryLogin(String username, String userpass) {
-		final String[] hashResponse = getHashedPass(userpass.toCharArray(), null);
-//=(UF=QE(H)) // hämta salt from db sen gå viidare em hash å jämföra...
+		final String[] hashResponse = getHashedPass(userpass.toCharArray(),
+				null);
+		// =(UF=QE(H)) // hï¿½mta salt from db sen gï¿½ viidare em hash ï¿½ jï¿½mfï¿½ra...
 	}
 
 	public String[] getHashedPass(char[] userpass, String usersalt) {
 		byte[] salt;
-		if (usersalt == null) { // Check if there is salt to use or if new should be created
+		if (usersalt == null) { // Check if there is salt to use or if new
+								// should be created
 			Random r = new SecureRandom();
 			salt = new byte[SALT_BYTE_SIZE];
 			r.nextBytes(salt);
 		} else {
 			salt = fromHex(usersalt);
 		}
-		
 
 		byte[] hash = null;
 		hash = pbkdf2(userpass, salt, PBKDF2_ITERATIONS, HASH_BYTE_SIZE);
@@ -119,20 +130,20 @@ public class DBConnect {
 		else
 			return hex;
 	}
-	
+
 	/**
-     * Converts a string of hexadecimal characters into a byte array.
-     *
-     * @param   hex         the hex string
-     * @return              the hex string decoded into a byte array
-     */
-    private static byte[] fromHex(String hex)
-    {
-        byte[] binary = new byte[hex.length() / 2];
-        for(int i = 0; i < binary.length; i++)
-        {
-            binary[i] = (byte)Integer.parseInt(hex.substring(2*i, 2*i+2), 16);
-        }
-        return binary;
-    }
+	 * Converts a string of hexadecimal characters into a byte array.
+	 *
+	 * @param hex
+	 *            the hex string
+	 * @return the hex string decoded into a byte array
+	 */
+	private static byte[] fromHex(String hex) {
+		byte[] binary = new byte[hex.length() / 2];
+		for (int i = 0; i < binary.length; i++) {
+			binary[i] = (byte) Integer.parseInt(
+					hex.substring(2 * i, 2 * i + 2), 16);
+		}
+		return binary;
+	}
 }

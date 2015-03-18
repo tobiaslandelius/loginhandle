@@ -53,7 +53,12 @@ public class Server implements Runnable {
 			String input = null;
 			while ((input = in.readLine()) != null) {
 				System.out.println("Got challange: "+input);
-				parseChallange(input);
+				if (parseChallange(input)) {
+					out.write("true\n");
+				} else {
+					out.write("false\n");
+				}
+				out.flush();
 			}
 			in.close();
 			out.close();
@@ -69,19 +74,22 @@ public class Server implements Runnable {
 		}
 	}
 
-	private void parseChallange(String input) {
+	private boolean parseChallange(String input) {
 		String[] split = input.split(":");
 		String type = split[0];
+		boolean response = false;
 		
 		switch (type) {
 			case "INSERT":
-				insertNewUser(split[1], split[2]);
+				response = insertNewUser(split[1], split[2]);
 		}
+		return response;
 	}
 
-	private void insertNewUser(String username, String userpass) {
+	private boolean insertNewUser(String username, String userpass) {
 		System.out.println("Inserting user "+username+" with password "+userpass);
 		dbConnect.insert(username, userpass);
+		return false;
 	}
 
 	private void tryLogin(String input) {

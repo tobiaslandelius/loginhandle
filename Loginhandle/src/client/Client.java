@@ -37,8 +37,9 @@ public class Client {
 	}
 
 	public void addNewUser(String username, String userpass) {
-		
+
 	}
+
 	public void challange(String serverMessage) throws IOException {
 		String userInput;
 
@@ -48,46 +49,36 @@ public class Client {
 				System.in));
 		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-		out.write(serverMessage+"\n");
+		out.write(serverMessage + "\n");
 		System.out.println("Message sent!");
 		out.flush();
-		
-		boolean go = true;
-		String message;
-		while (go) {
-			message = reader.readLine();
-			if (message.equals("quit"))
-				break;
-			
-			out.write(message + "\n");
-			out.flush();
-			System.out.println("Message sent!");
-			System.out.println("Waiting for response..");
-			String response = in.readLine();
-		}
+
+		System.out.println("Waiting for response..");
+		String response = in.readLine();
+		System.out.println(response);
 		in.close();
 		out.close();
 		reader.close();
 		clientSocket.close();
 
 	}
-//
-//	public static void main(String[] args) {
-//		int port = 6000;
-//		String host = "localhost";
-//
-//		Client client = new Client("localhost", port);
-//
-//		try {
-//			client.connect();
-//			client.challange();
-//
-//		} catch (UnknownHostException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		System.out.println("Done!");
-//	}
+	//
+	// public static void main(String[] args) {
+	// int port = 6000;
+	// String host = "localhost";
+	//
+	// Client client = new Client("localhost", port);
+	//
+	// try {
+	// client.connect();
+	// client.challange();
+	//
+	// } catch (UnknownHostException e) {
+	// e.printStackTrace();
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// System.out.println("Done!");
+	// }
 
 }
