@@ -49,6 +49,7 @@ public class Client {
 		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
 		out.write(serverMessage+"\n");
+		System.out.println("Message sent!");
 		out.flush();
 		
 		boolean go = true;
@@ -61,6 +62,8 @@ public class Client {
 			out.write(message + "\n");
 			out.flush();
 			System.out.println("Message sent!");
+			System.out.println("Waiting for response..");
+			String response = in.readLine();
 		}
 		in.close();
 		out.close();

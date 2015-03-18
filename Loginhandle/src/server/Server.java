@@ -16,7 +16,7 @@ public class Server implements Runnable {
 
 	private ServerSocket serverSocket = null;
 
-//	private DBConnect dbConnect = new DBConnect();
+	private DBConnect dbConnect = new DBConnect();
 	private int numberOfClients;
 
 	public Server(int port) {
@@ -52,7 +52,8 @@ public class Server implements Runnable {
 
 			String input = null;
 			while ((input = in.readLine()) != null) {
-				tryLogin(input);
+				System.out.println("Got challange: "+input);
+				parseChallange(input);
 			}
 			in.close();
 			out.close();
@@ -68,10 +69,25 @@ public class Server implements Runnable {
 		}
 	}
 
+	private void parseChallange(String input) {
+		String[] split = input.split(":");
+		String type = split[0];
+		
+		switch (type) {
+			case "INSERT":
+				insertNewUser(split[1], split[2]);
+		}
+	}
+
+	private void insertNewUser(String username, String userpass) {
+		System.out.println("Inserting user "+username+" with password "+userpass);
+		dbConnect.insert(username, userpass);
+	}
+
 	private void tryLogin(String input) {
 		String[] s = input.split(":");
 		System.out.println("Got message: "+input);
-//		dbConnect.tryLogin(s[0], s[1]);
+		dbConnect.tryLogin(s[0], s[1]);
 	}
 
 	private void printConnected() {
