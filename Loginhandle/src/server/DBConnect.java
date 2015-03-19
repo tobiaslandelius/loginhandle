@@ -75,7 +75,7 @@ public class DBConnect {
 		String usersalt = null;
 		try {
 			PreparedStatement posted = con
-					.prepareStatement("SELECT usersalt FROM userinfo WHERE username='"
+					.prepareStatement("SELECT usersalt,userpass FROM userinfo WHERE username='"
 							+ username + "'");
 			ResultSet result = posted.executeQuery();
 
@@ -85,12 +85,8 @@ public class DBConnect {
 			usersalt = result.getString("usersalt");
 
 			String userpassHashed = getHashedPass(userpass.toCharArray(),
-					usersalt)[0];
+					result.getString("usersalt"))[0];
 
-			posted = con
-					.prepareStatement("SELECT userpass FROM userinfo WHERE username='"
-							+ username + "'");
-			result = posted.executeQuery();
 
 			if (!result.getString("userpass").equals(userpassHashed)) {
 				throw new WrongPasswordException();
