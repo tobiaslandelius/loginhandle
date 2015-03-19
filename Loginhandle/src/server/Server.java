@@ -11,6 +11,7 @@ import java.net.SocketException;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
 
+import exceptions.NoSuchUserException;
 import exceptions.UserAlreadyExistsException;
 
 
@@ -57,7 +58,7 @@ public class Server implements Runnable {
 				try {
 					parseChallange(input);
 					out.write("true:\n");
-				} catch (UserAlreadyExistsException e) {
+				} catch (Exception e) {
 					out.write("false:"+e.getMessage()+"\n");
 				}
 				out.flush();
@@ -80,7 +81,7 @@ public class Server implements Runnable {
 	 * @param input. Message from server
 	 * @throws UserAlreadyExistsException if user already exists in database 
 	 */
-	private void parseChallange(String input) throws UserAlreadyExistsException {
+	private void parseChallange(String input) throws Exception {
 		String[] split = input.split(":");
 		String type = split[0];
 		boolean response = false;
@@ -96,13 +97,13 @@ public class Server implements Runnable {
 		}
 	}
 
-	private void login(String username, String userpass) {
+	private void login(String username, String userpass) throws Exception {
 		System.out.println("Try login with "+username+" and password "+userpass);
 		dbConnect.login(username, userpass);
 
 	}
 
-	private void insertNewUser(String username, String userpass) throws UserAlreadyExistsException {
+	private void insertNewUser(String username, String userpass) throws Exception {
 		System.out.println("Inserting user "+username+" with password "+userpass);
 		dbConnect.insert(username, userpass);
 	}

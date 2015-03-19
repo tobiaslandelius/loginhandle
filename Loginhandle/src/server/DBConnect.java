@@ -19,7 +19,9 @@ import javax.crypto.spec.PBEKeySpec;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
+import exceptions.NoSuchUserException;
 import exceptions.UserAlreadyExistsException;
+import exceptions.WrongPasswordException;
 
 public class DBConnect {
 
@@ -48,9 +50,9 @@ public class DBConnect {
 		}
 	}
 
-	public void insert(String username, String userpass) throws UserAlreadyExistsException {
-		final String[] newHashes = getHashedPass(userpass.toCharArray(),
-				null);
+	public void insert(String username, String userpass)
+			throws UserAlreadyExistsException {
+		final String[] newHashes = getHashedPass(userpass.toCharArray(), null);
 		try {
 			PreparedStatement posted = con
 					.prepareStatement("INSERT INTO userinfo (username, userpass, usersalt) VALUES ('"
@@ -68,14 +70,30 @@ public class DBConnect {
 		System.out.println("Inserted!");
 	}
 
-	public void login(String username, String userpass) {
-		final String[] hashResponse = getHashedPass(userpass.toCharArray(),
-				null);
+	public void login(String username, String userpass)
+			throws NoSuchUserException, WrongPasswordException {
+		String usersalt = null;
 		try {
-			PreparedStatement posted = con.prepareStatement("SELECT usersalt FROM userinfo WHERE username='"+username+"'");
+			PreparedStatement posted = con
+					.prepareStatement("SELECT usersalt FROM userinfo WHERE username='"
+							+ username + "'");
 			ResultSet result = posted.executeQuery();
-			while (result.next()) {
-				System.out.println(result.getString("usersalt"));
+
+			if (!result.next())
+				throw new NoSuchUserException();
+
+			usersalt = result.getString("usersalt");
+
+			String userpassHashed = getHashedPass(userpass.toCharArray(),
+					usersalt)[0];
+
+			posted = con
+					.prepareStatement("SELECT userpass FROM userinfo WHERE username='"
+							+ username + "'");
+			result = posted.executeQuery();
+
+			if (!result.getString("userpass").equals(userpassHashed)) {
+				throw new WrongPasswordException();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -141,7 +159,7 @@ public class DBConnect {
 
 	/**
 	 * Converts a string of hexadecimal characters into a byte array.
-	 *
+	 * 
 	 * @param hex
 	 *            the hex string
 	 * @return the hex string decoded into a byte array

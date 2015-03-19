@@ -60,7 +60,7 @@ public class ClientMain {
 	
 
 	private static void serverOptions() {
-		host = "localhost";
+		host = "192.168.0.102";
 		port = 6660;
 	}
 
