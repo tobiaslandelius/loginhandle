@@ -39,7 +39,8 @@ public class ClientMain {
 		String password = SHA256.encrypt(br.readLine());
 		
 		String message = "LOGIN:" +username+ ":" +password;
-		connect(message);
+		Client c = connect();
+		c.challange(message);
 	}
 
 	private static void addUser() throws IOException {
@@ -49,16 +50,17 @@ public class ClientMain {
 		String password = SHA256.encrypt(br.readLine());
 		
 		String message = "INSERT:" +username+ ":" + password;
-		connect(message);
+		Client c = connect();
+		c.challange(message);
 	}
 
-	private static void connect(String message) {
-		Client c = new Client(host, port, message);
+	private static Client connect() {
+		return new Client(host, port);
 	}
 	
 
 	private static void serverOptions() {
-		host = "192.168.0.102";
+		host = "localhost";
 		port = 6660;
 	}
 
