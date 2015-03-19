@@ -9,14 +9,52 @@ import encryption.SHA256;
 
 public class ClientMain {
 
+	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	private static String host;
+	private static int port;
+
 	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		boolean run = true;
+		serverOptions();
+		while (run) {
+			int option = getOption(br);
+			switch (option) {
+			case 1:
+				addUser();
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			}
+		}
+	}
+
+	private static void serverOptions() {
+		host = "192.168.0.102";
+		port = 6660;
+	}
+
+	private static void addUser() throws IOException {
 		System.out.println("Username: ");
 		String username = br.readLine();
 		System.out.println("Password: ");
 		String password = SHA256.encrypt(br.readLine());
 		
-		Client c = new Client("localhost", 6660, "INSERT:"+username+":"+password);
+		String message = "INSERT:" +username+ ":" + password;
+		connect(message);
+	}
+
+	private static void connect(String message) {
+		Client c = new Client(host, port, message);
+	}
+
+	private static int getOption(BufferedReader br) throws IOException {
+		System.out.println("Välj alternativ: ");
+		System.out.println("   1. Lägg till användare");
+		System.out.println("   2. Logga in");
+		System.out.println("   3. Avsluta");
+		return Integer.parseInt(br.readLine());
 	}
 
 }

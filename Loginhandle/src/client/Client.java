@@ -52,6 +52,21 @@ public class Client {
 		out.write(serverMessage + "\n");
 		System.out.println("Message sent!");
 		out.flush();
+		
+		
+		boolean go = true;
+		String message;
+		while (go) {
+//			message = reader.readLine();
+//			if (message.equals("quit"))
+//				break;
+//			
+//			out.write(message + "\n");
+//			out.flush();
+//			System.out.println("Message sent!");
+			System.out.println("Waiting for response..");
+			String response = in.readLine();
+		}
 
 		System.out.println("Waiting for response..");
 		String response = in.readLine();
