@@ -68,10 +68,18 @@ public class DBConnect {
 		System.out.println("Inserted!");
 	}
 
-	public void tryLogin(String username, String userpass) {
+	public void login(String username, String userpass) {
 		final String[] hashResponse = getHashedPass(userpass.toCharArray(),
 				null);
-		// =(UF=QE(H)) // h�mta salt from db sen g� viidare em hash � j�mf�ra...
+		try {
+			PreparedStatement posted = con.prepareStatement("SELECT usersalt FROM userinfo WHERE username='"+username+"'");
+			ResultSet result = posted.executeQuery();
+			while (result.next()) {
+				System.out.println(result.getString("usersalt"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String[] getHashedPass(char[] userpass, String usersalt) {

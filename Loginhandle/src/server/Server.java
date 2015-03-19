@@ -40,7 +40,6 @@ public class Server implements Runnable {
 	public void run() {
 		try {
 			Socket clientSocket = serverSocket.accept();
-
 			numberOfClients++;
 			newListener();
 
@@ -77,6 +76,10 @@ public class Server implements Runnable {
 		printConnected();
 	}
 
+	/**
+	 * @param input. Message from server
+	 * @throws UserAlreadyExistsException if user already exists in database 
+	 */
 	private void parseChallange(String input) throws UserAlreadyExistsException {
 		String[] split = input.split(":");
 		String type = split[0];
@@ -85,18 +88,23 @@ public class Server implements Runnable {
 		switch (type) {
 			case "INSERT":
 				insertNewUser(split[1], split[2]);
+				break;
+			case "LOGIN":
+				login(split[1], split[2]);
+				break;
+				
 		}
+	}
+
+	private void login(String username, String userpass) {
+		System.out.println("Try login with "+username+" and password "+userpass);
+		dbConnect.login(username, userpass);
+
 	}
 
 	private void insertNewUser(String username, String userpass) throws UserAlreadyExistsException {
 		System.out.println("Inserting user "+username+" with password "+userpass);
 		dbConnect.insert(username, userpass);
-	}
-
-	private void tryLogin(String input) {
-		String[] s = input.split(":");
-		System.out.println("Got message: "+input);
-		dbConnect.tryLogin(s[0], s[1]);
 	}
 
 	private void printConnected() {
