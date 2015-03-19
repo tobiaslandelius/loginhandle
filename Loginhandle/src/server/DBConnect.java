@@ -19,6 +19,8 @@ import javax.crypto.spec.PBEKeySpec;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
+import exceptions.UserAlreadyExistsException;
+
 public class DBConnect {
 
 	public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1";
@@ -46,7 +48,7 @@ public class DBConnect {
 		}
 	}
 
-	public boolean insert(String username, String userpass) {
+	public void insert(String username, String userpass) throws UserAlreadyExistsException {
 		final String[] newHashes = getHashedPass(userpass.toCharArray(),
 				null);
 		try {
@@ -59,13 +61,11 @@ public class DBConnect {
 							+ newHashes[1] + "')");
 			posted.executeUpdate();
 		} catch (MySQLIntegrityConstraintViolationException e) {
-			return false;  // Username already exists;
+			throw new UserAlreadyExistsException();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		System.out.println("Inserted!");
-		return true;
-		
 	}
 
 	public void tryLogin(String username, String userpass) {

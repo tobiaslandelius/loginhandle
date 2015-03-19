@@ -11,6 +11,8 @@ import java.net.SocketException;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
 
+import exceptions.UserAlreadyExistsException;
+
 
 public class Server implements Runnable {
 
@@ -53,10 +55,11 @@ public class Server implements Runnable {
 			String input = null;
 			while ((input = in.readLine()) != null) {
 				System.out.println("Got challange: "+input);
-				if (parseChallange(input)) {
-					out.write("true\n");
-				} else {
-					out.write("false\n");
+				try {
+					parseChallange(input);
+					out.write("true:\n");
+				} catch (UserAlreadyExistsException e) {
+					out.write("false:"+e.getMessage()+"\n");
 				}
 				out.flush();
 			}
@@ -68,28 +71,26 @@ public class Server implements Runnable {
 		} catch (SocketException e) {
 			System.out.println("Client died..");
 			numberOfClients--;
-			printConnected();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		printConnected();
 	}
 
-	private boolean parseChallange(String input) {
+	private void parseChallange(String input) throws UserAlreadyExistsException {
 		String[] split = input.split(":");
 		String type = split[0];
 		boolean response = false;
 		
 		switch (type) {
 			case "INSERT":
-				response = insertNewUser(split[1], split[2]);
+				insertNewUser(split[1], split[2]);
 		}
-		return response;
 	}
 
-	private boolean insertNewUser(String username, String userpass) {
+	private void insertNewUser(String username, String userpass) throws UserAlreadyExistsException {
 		System.out.println("Inserting user "+username+" with password "+userpass);
 		dbConnect.insert(username, userpass);
-		return false;
 	}
 
 	private void tryLogin(String input) {
