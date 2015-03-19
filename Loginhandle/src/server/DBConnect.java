@@ -84,11 +84,10 @@ public class DBConnect {
 
 			usersalt = result.getString("usersalt");
 
-			String userpassHashed = getHashedPass(userpass.toCharArray(),
+			String hashedUserpass = getHashedPass(userpass.toCharArray(),
 					result.getString("usersalt"))[0];
 
-
-			if (!result.getString("userpass").equals(userpassHashed)) {
+			if (!result.getString("userpass").equals(hashedUserpass)) {
 				throw new WrongPasswordException();
 			}
 		} catch (SQLException e) {
