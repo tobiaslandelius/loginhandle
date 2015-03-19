@@ -11,6 +11,7 @@ public class Client {
 
 	private String hostname;
 	private int port;
+	private String errorMessage;
 	Socket clientSocket;
 
 	public Client(String hostname, int port) {
@@ -23,7 +24,6 @@ public class Client {
 		System.out.println("Attempting to connect to " + hostname + ":" + port);
 		try {
 			clientSocket = new Socket(hostname, port);
-			System.out.println("Connection Established");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -31,21 +31,32 @@ public class Client {
 		}
 	}
 
-	public void challange(String serverMessage) throws IOException {
+	public boolean challange(String serverMessage) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				clientSocket.getInputStream()));
 		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
 		out.write(serverMessage + "\n");
 		out.flush();
-
-		System.out.println("Message sent: "+serverMessage);
-
-		System.out.println("Waiting for response..");
 		String response = in.readLine();
-		System.out.println("Response: " +response);
+		
 		in.close();
 		out.close();
 		clientSocket.close();
+		
+		return handleRespons(response);
+	}
+
+	private boolean handleRespons(String response) {
+		String[] splitResponse = response.split(":");
+		if (splitResponse[0].equals("true")) {
+			return true;
+		}
+		errorMessage = splitResponse[1];
+		return false;
+	}
+	
+	public String getErrorMessage() {
+		return errorMessage;
 	}
 }
