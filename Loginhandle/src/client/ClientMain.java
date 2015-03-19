@@ -23,16 +23,23 @@ public class ClientMain {
 				addUser();
 				break;
 			case 2:
+				login();
 				break;
 			case 3:
+				System.exit(1);
 				break;
 			}
 		}
 	}
 
-	private static void serverOptions() {
-		host = "192.168.0.102";
-		port = 6660;
+	private static void login() throws IOException {
+		System.out.println("Username: ");
+		String username = br.readLine();
+		System.out.println("Password: ");
+		String password = SHA256.encrypt(br.readLine());
+		
+		String message = "LOGIN:" +username+ ":" +password;
+		connect(message);
 	}
 
 	private static void addUser() throws IOException {
@@ -47,6 +54,12 @@ public class ClientMain {
 
 	private static void connect(String message) {
 		Client c = new Client(host, port, message);
+	}
+	
+
+	private static void serverOptions() {
+		host = "192.168.0.102";
+		port = 6660;
 	}
 
 	private static int getOption(BufferedReader br) throws IOException {
