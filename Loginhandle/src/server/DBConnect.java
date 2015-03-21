@@ -88,11 +88,14 @@ public class DBConnect {
 					result.getString("usersalt"))[0];
 
 			if (!result.getString("userpass").equals(hashedUserpass)) {
+				System.out.println("User denied access.");
 				throw new WrongPasswordException();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Login access granted!.");
+
 	}
 
 	public String[] getHashedPass(char[] userpass, String usersalt) {

@@ -93,8 +93,14 @@ public class Server implements Runnable {
 			case "LOGIN":
 				login(split[1], split[2]);
 				break;
-				
+			case "CHECK_FOR_USER":
+				checkForUser(split[1]);
+			break;
 		}
+	}
+
+	private void checkForUser(String username) {
+		System.out.println("Checking for user: " +username);
 	}
 
 	private void login(String username, String userpass) throws Exception {
