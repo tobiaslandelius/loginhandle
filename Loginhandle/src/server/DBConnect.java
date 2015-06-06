@@ -109,12 +109,8 @@ public class DBConnect {
 		byte[] hash = null;
 		hash = pbkdf2(userpass, salt, PBKDF2_ITERATIONS, HASH_BYTE_SIZE);
 
-		String[] response = new String[2];
-		response[0] = toHex(hash);
-		response[1] = toHex(salt);
-
+		String[] response = {toHex(hash),toHex(salt)};
 		return response;
-
 	}
 
 	private byte[] pbkdf2(char[] userpass, byte[] salt, int pbkdf2Iterations,
