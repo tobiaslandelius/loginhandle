@@ -18,6 +18,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import util.DatabaseReturnMessage;
+import util.Identifier;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -95,7 +96,7 @@ public class DBConnect {
 
 			if (result.getString("userpass").equals(hashedUserpass)) {
 				drm.permission = true;
-				drm.identifier = createNewIdentifier();
+				drm.identifier = createNewIdentifier(username);
 			} else {
 				drm.errorMessage = "Wrong password!";
 			}
@@ -122,8 +123,9 @@ public class DBConnect {
 		return drm;
 	}
 
-	private String createNewIdentifier() {
-		return new SessionIdentifierGenerator().newIdentifier();
+	private Identifier createNewIdentifier(String username) {
+		String codeIdentifier = new SessionIdentifierGenerator().newCodeIdentifier();
+		return new Identifier(username, codeIdentifier);
 	}
 	
 	public String[] getHashedPass(char[] userpass, String usersalt) {

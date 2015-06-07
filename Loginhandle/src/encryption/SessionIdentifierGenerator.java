@@ -7,7 +7,7 @@ public final class SessionIdentifierGenerator {
 
 	private SecureRandom random = new SecureRandom();
 	
-	public String newIdentifier() {
+	public String newCodeIdentifier() {
 		return new BigInteger(130, random).toString(32);
 	}
 }
