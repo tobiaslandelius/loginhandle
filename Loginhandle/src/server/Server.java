@@ -54,7 +54,7 @@ public class Server implements Runnable {
 
 			String input = null;
 			while ((input = in.readLine()) != null) {
-				System.out.println("Got challange: "+input);
+				System.out.println("Got challange: " +input);
 				try {
 					parseChallange(input);
 					out.write("true:\n");
@@ -93,7 +93,6 @@ public class Server implements Runnable {
 			case "LOGIN":
 				login(split[1], split[2]);
 				break;
-				
 		}
 	}
 
@@ -111,6 +110,7 @@ public class Server implements Runnable {
 	private void printConnected() {
 		System.out.println("Number of clients: " +numberOfClients);
 	}
+	
 	private void newListener() {
 		(new Thread(this)).start();
 	} // calls run()

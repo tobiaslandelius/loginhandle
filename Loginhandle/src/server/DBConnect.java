@@ -82,8 +82,6 @@ public class DBConnect {
 			if (!result.next())
 				throw new NoSuchUserException();
 
-			usersalt = result.getString("usersalt");
-
 			String hashedUserpass = getHashedPass(userpass.toCharArray(),
 					result.getString("usersalt"))[0];
 
