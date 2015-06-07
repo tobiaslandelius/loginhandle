@@ -98,6 +98,20 @@ public class DBConnect {
 
 	}
 
+	public void checkUser(String username) throws UserAlreadyExistsException {
+		try {
+			PreparedStatement posted = con.prepareStatement("SELECT username FROM userinfo WHERE username='"
+					+ username + "'");
+			ResultSet result = posted.executeQuery();
+			
+			if (result.next()) 
+				throw new UserAlreadyExistsException();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public String[] getHashedPass(char[] userpass, String usersalt) {
 		byte[] salt;
 		if (usersalt == null) { // Check if there is salt to use or if new

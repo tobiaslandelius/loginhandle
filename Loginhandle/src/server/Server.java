@@ -57,6 +57,7 @@ public class Server implements Runnable {
 				System.out.println("Got challange: "+input);
 				try {
 					parseChallange(input);
+					System.out.println("Return true");
 					out.write("true:\n");
 				} catch (Exception e) {
 					out.write("false:"+e.getMessage()+"\n");
@@ -84,8 +85,6 @@ public class Server implements Runnable {
 	private void parseChallange(String input) throws Exception {
 		String[] split = input.split(":");
 		String type = split[0];
-		boolean response = false;
-		
 		switch (type) {
 			case "INSERT":
 				insertNewUser(split[1], split[2]);
@@ -93,20 +92,20 @@ public class Server implements Runnable {
 			case "LOGIN":
 				login(split[1], split[2]);
 				break;
-			case "CHECK_FOR_USER":
+			case "CHECK_FOR_USERNAME":
 				checkForUser(split[1]);
 			break;
 		}
 	}
 
-	private void checkForUser(String username) {
+	private void checkForUser(String username) throws UserAlreadyExistsException   {
 		System.out.println("Checking for user: " +username);
+		dbConnect.checkUser(username);
 	}
 
 	private void login(String username, String userpass) throws Exception {
 		System.out.println("Try login with "+username+" and password "+userpass);
 		dbConnect.login(username, userpass);
-
 	}
 
 	private void insertNewUser(String username, String userpass) throws Exception {
