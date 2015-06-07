@@ -103,6 +103,7 @@ public class Server implements Runnable {
 	}
 
 	private void insertNewUser(String username, String userpass) throws Exception {
+		System.out.println("This is just a test");
 		System.out.println("Inserting user "+username+" with password "+userpass);
 		dbConnect.insert(username, userpass);
 	}
