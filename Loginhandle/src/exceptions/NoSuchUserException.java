@@ -3,6 +3,6 @@ package exceptions;
 public class NoSuchUserException extends Exception {
 
 	public String getMessage() {
-		return "User with this username doesn´t exists in database";
+		return "User with this username doesnt exists in database";
 	}
 }
