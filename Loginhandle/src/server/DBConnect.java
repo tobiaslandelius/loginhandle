@@ -84,20 +84,18 @@ public class DBConnect {
 			ResultSet result = posted.executeQuery();
 
 			if (!result.next()) {
-				drm.permission = false;
-				drm.errorMessage = "User with this username doesn´t exists in database";
+				drm.errorMessage = "User with this username doesnt exists in database";
 			}
 
 			String hashedUserpass = getHashedPass(userpass.toCharArray(),
 					result.getString("usersalt"))[0];
 
-			if (!result.getString("userpass").equals(hashedUserpass)) {
-				drm.permission = false;
+			if (result.getString("userpass").equals(hashedUserpass)) {
+				drm.permission = true;
+			} else {
 				drm.errorMessage = "Wrong password!";
 			}
-			drm.permission = true;
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return drm;
 	}

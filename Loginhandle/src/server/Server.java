@@ -54,7 +54,9 @@ public class Server implements Runnable {
 			String input = null;
 			while ((input = in.readLine()) != null) {
 				System.out.println("Got challange: " + input);
-				out.write(new ReturnMessageFactory().buildMessage(parseChallange(input)));
+				String returnMessage = new ReturnMessageFactory().buildMessage(parseChallange(input));
+				System.out.println(returnMessage);
+				out.write(returnMessage);
 				out.flush();
 			}
 			in.close();
