@@ -19,6 +19,7 @@ import javax.crypto.spec.PBEKeySpec;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
+import encryption.SessionIdentifierGenerator;
 import exceptions.NoSuchUserException;
 import exceptions.UserAlreadyExistsException;
 import exceptions.WrongPasswordException;
@@ -92,6 +93,7 @@ public class DBConnect {
 
 			if (result.getString("userpass").equals(hashedUserpass)) {
 				drm.permission = true;
+				drm.identifier = createNewIdentifier();
 			} else {
 				drm.errorMessage = "Wrong password!";
 			}
@@ -99,7 +101,7 @@ public class DBConnect {
 		}
 		return drm;
 	}
-	
+
 	public DatabaseReturnMessage checkUser(String username) {
 		DatabaseReturnMessage drm = new DatabaseReturnMessage();
 		try {
@@ -118,6 +120,10 @@ public class DBConnect {
 		return drm;
 	}
 
+	private String createNewIdentifier() {
+		return new SessionIdentifierGenerator().newIdentifier();
+	}
+	
 	public String[] getHashedPass(char[] userpass, String usersalt) {
 		byte[] salt;
 		if (usersalt == null) { // Check if there is salt to use or if new
