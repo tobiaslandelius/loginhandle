@@ -83,20 +83,28 @@ public class Server implements Runnable {
 		case "LOGIN":
 			drm = login(split[1], split[2]);
 			break;
+		case "CHECK_FOR_USERNAME":
+			drm = checkForUser(split[1]);
+			break;
 		}
 		return drm;
-	}
-
-	private DatabaseReturnMessage login(String username, String userpass) {
-		System.out.println("Try login with " + username + " and password "
-				+ userpass);
-		return dbConnect.login(username, userpass);
 	}
 
 	private DatabaseReturnMessage insertNewUser(String username, String userpass) {
 		System.out.println("Inserting user " + username + " with password "
 				+ userpass);
 		return dbConnect.insert(username, userpass);
+	}
+	
+	private DatabaseReturnMessage login(String username, String userpass) {
+		System.out.println("Try login with " + username + " and password "
+				+ userpass);
+		return dbConnect.login(username, userpass);
+	}
+	
+	private DatabaseReturnMessage checkForUser(String username) {
+		System.out.println("Checking for user: " +username);
+		return dbConnect.checkUser(username);
 	}
 
 	private void printConnected() {

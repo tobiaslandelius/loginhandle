@@ -101,6 +101,24 @@ public class DBConnect {
 		}
 		return drm;
 	}
+	
+	public DatabaseReturnMessage checkUser(String username) {
+		DatabaseReturnMessage drm = new DatabaseReturnMessage();
+		try {
+			PreparedStatement posted = con.prepareStatement("SELECT username FROM userinfo WHERE username='"+ username + "'");
+			ResultSet result = posted.executeQuery();
+			
+			if (result.next()) {
+				drm.permission = false;
+				drm.errorMessage = "User with this username already exists in database";
+				return drm;
+			}
+			drm.permission = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return drm;
+	}
 
 	public String[] getHashedPass(char[] userpass, String usersalt) {
 		byte[] salt;
