@@ -1,6 +1,5 @@
-package server;
+package util;
 
-import util.DatabaseReturnMessage;
 
 public class ReturnMessageFactory {
 
