@@ -1,5 +1,7 @@
 package server;
 
+import util.DatabaseReturnMessage;
+
 public class ReturnMessageFactory {
 
 	public String buildMessage(DatabaseReturnMessage drm) {

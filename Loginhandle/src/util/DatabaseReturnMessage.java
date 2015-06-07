@@ -1,4 +1,4 @@
-package server;
+package util;
 
 public class DatabaseReturnMessage {
 
