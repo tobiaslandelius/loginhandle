@@ -50,9 +50,9 @@ public class DBConnect {
 		}
 	}
 
-	public void insert(String username, String userpass)
-			throws UserAlreadyExistsException {
+	public DatabaseReturnMessage insert(String username, String userpass) {
 		final String[] newHashes = getHashedPass(userpass.toCharArray(), null);
+		DatabaseReturnMessage drm = new DatabaseReturnMessage();
 		try {
 			PreparedStatement posted = con
 					.prepareStatement("INSERT INTO userinfo (username, userpass, usersalt) VALUES ('"
@@ -62,35 +62,44 @@ public class DBConnect {
 							+ "', '"
 							+ newHashes[1] + "')");
 			posted.executeUpdate();
+			drm.permission = true;
 		} catch (MySQLIntegrityConstraintViolationException e) {
-			throw new UserAlreadyExistsException();
+			drm.permission = false;
+			drm.errorMessage = "User with this username already exists in database";
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		System.out.println("Inserted!");
+		return drm;
 	}
 
-	public void login(String username, String userpass)
-			throws NoSuchUserException, WrongPasswordException {
+	public DatabaseReturnMessage login(String username, String userpass) {
 		String usersalt = null;
+		DatabaseReturnMessage drm = new DatabaseReturnMessage();
+		
 		try {
 			PreparedStatement posted = con
 					.prepareStatement("SELECT usersalt,userpass FROM userinfo WHERE username='"
 							+ username + "'");
 			ResultSet result = posted.executeQuery();
 
-			if (!result.next())
-				throw new NoSuchUserException();
+			if (!result.next()) {
+				drm.permission = false;
+				drm.errorMessage = "User with this username doesn´t exists in database";
+			}
 
 			String hashedUserpass = getHashedPass(userpass.toCharArray(),
 					result.getString("usersalt"))[0];
 
 			if (!result.getString("userpass").equals(hashedUserpass)) {
-				throw new WrongPasswordException();
+				drm.permission = false;
+				drm.errorMessage = "Wrong password!";
 			}
+			drm.permission = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return drm;
 	}
 
 	public String[] getHashedPass(char[] userpass, String usersalt) {
